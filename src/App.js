@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import logo from './logo.svg';
 import firebase from 'firebase/app';
 import 'firebase/database';
 import './App.css';
+import ProductList from "./component/ProductCardList"
+import Selector from './component/Selector';
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyDhMawwt7dvc0FwFPX5dHZlJzecRVgLCdE",
@@ -29,9 +31,11 @@ const App = () => {
   }, []);
 
   return (
-    <ul>
-      {products.map(product => <li key={product.sku}>{product.title}</li>)}
-    </ul>
+    <React.Fragment>
+      <Selector />
+      <ProductList products = {products} />
+      
+    </React.Fragment>
   );
 };
 
