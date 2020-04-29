@@ -15,8 +15,6 @@ const useStyles = makeStyles({
 
 const ProductCard = ({product}) => {
 
-    console.log("The produce is : ")
-    console.log(product)
 
     const classes = useStyles();
     return (
@@ -29,9 +27,6 @@ const ProductCard = ({product}) => {
                     </Typography>
                     <Typography align="center" gutterBottom variant='subtitle1' component="p">
                             ${product.price}
-                    </Typography>
-                    <Typography align="center" gutterBottom variant='subtitle1' component="p">
-                            {product.description}
                     </Typography>
                     <Typography align="center" gutterBottom variant='subtitle1' component="p">
                             {product.description}
