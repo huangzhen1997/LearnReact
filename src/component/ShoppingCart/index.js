@@ -3,28 +3,24 @@ import Sidebar from "react-sidebar";
 import { makeStyles, Grid, Box } from "@material-ui/core";
 import CartItem from "../CartItem";
 
-const ShoppingCart = ({items}) =>{
+const ShoppingCart = ({selected,setSelected}) =>{
 
     var total = 0;
 
-    console.log("testing")
-
-
-    for (var i =0;i<items.length;i++ ){
-        total += items[i].price;
+    const keys =Object.keys(selected);
+    for (const key of keys){
+        total += selected[key]['quantity']*selected[key]['product']['price']
     }
-
+   
     return (
-
         <Box padding = {10}>
             <Grid container direction="column">
-                {items.map(item => <CartItem key={item.sku} item={item}/>)}
+                {Object.keys(selected).map((sku,index) => <CartItem key={sku} size={selected[sku]['quantity']} item = {selected[sku]['product']} selected={selected} setSelected={setSelected}/>)}
             </Grid>
             <Box>
-            Total {total}
+            Total ${total}
             </Box>
         </Box>
-        
     );
 }
 

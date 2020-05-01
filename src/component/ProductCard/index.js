@@ -2,8 +2,6 @@ import React from 'react';
 import {makeStyles} from "@material-ui/core/styles";
 import {Card,CardMedia,CardContent,CardActionArea,CardActions,Typography,Grid,Button} from '@material-ui/core';
 
-
-
 const useStyles = makeStyles({
     root: {
       maxWidth: 445,
@@ -13,8 +11,23 @@ const useStyles = makeStyles({
     },
   });
 
-const ProductCard = ({product}) => {
+const ProductCard = ({product,selected,setSelected}) => {
 
+    const addingToCart = (cur_pro)=>{
+
+        console.log("calling function")
+        const tempSelected=selected;
+        if(cur_pro.sku in tempSelected){
+            tempSelected[cur_pro.sku]['quantity']=+1;
+            setSelected(tempSelected);
+        }
+        else{
+            tempSelected[cur_pro.sku]={};
+            tempSelected[cur_pro.sku]['quantity']=1;
+            tempSelected[cur_pro.sku]['product']=cur_pro;
+            setSelected(tempSelected);
+        }
+    }
 
     const classes = useStyles();
     return (
@@ -27,10 +40,7 @@ const ProductCard = ({product}) => {
                     </Typography>
                     <Typography align="center" gutterBottom variant='subtitle1' component="p">
                             ${product.price}
-                    </Typography>
-                    <Typography align="center" gutterBottom variant='subtitle1' component="p">
-                            {product.description}
-                    </Typography>
+                    </Typography>             
                 </CardContent>  
             </CardActionArea>
             <CardActions>
@@ -51,13 +61,12 @@ const ProductCard = ({product}) => {
              </CardActions> 
              <CardActions>
                  <Grid container justify="center">
-                     <Button size="large" variant="contained" color="primary">
+                     <Button size="large" variant="contained" color="primary" onClick={()=>addingToCart(product)}>
                          Add to Cart
                     </Button>
                 </Grid>
             </CardActions>
         </Card>
-
     );
 }
 

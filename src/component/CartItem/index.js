@@ -1,9 +1,40 @@
 import React from 'react';
-import {Box,Grid} from '@material-ui/core';
+import {Box,Grid,Button} from '@material-ui/core';
 
-const CartItem = ({item}) =>{
+const CartItem = ({item,size,setSelected,selected}) =>{
 
-    
+    console.log("the size is ")
+    console.log(size)
+
+    const addingToCart = (cur_pro)=>{
+
+        const tempSelected=selected;
+        if(cur_pro.sku in tempSelected){
+            tempSelected[cur_pro.sku]['quantity']+=1;
+            setSelected(tempSelected);
+        }
+        else{
+            console.log("firstime")
+            tempSelected[cur_pro.sku]={};
+            tempSelected[cur_pro.sku]['quantity']=1;
+            tempSelected[cur_pro.sku]['product']=cur_pro;
+            setSelected(tempSelected);
+        }
+    }
+
+    const removingFromCart = (cur_pro)=>{
+
+        const tempSelected=selected;
+        if(cur_pro.sku in tempSelected){
+            tempSelected[cur_pro.sku]['quantity']-=1;
+            if(tempSelected[cur_pro.sku]['quantity']===0){
+                delete tempSelected[cur_pro.sku]; 
+            }
+            setSelected(tempSelected);
+        }
+    }
+
+
     return (
         <Grid item key={item.sku} xd={2} border ={1} height ="60%">
              <Box border={1} align="center" height="50%" width="50%" position="relative">
@@ -16,9 +47,18 @@ const CartItem = ({item}) =>{
        	<Box fontSize='50%' fontStyle="italic" fontWeight="light">
        	{item.description}
        	</Box>
-       	<Box >
-       	{item.currencyFormat + item.price.toString()}
-       	</Box>
+        <Box >
+            <Button  onClick={()=>addingToCart(item)}>
+                         + 
+            </Button>
+            <Button onClick={()=>removingFromCart(item)}>
+                         -
+            </Button>
+            <Box  fontWeight="dark">
+                {size}  X  {item.currencyFormat + item.price.toString()}
+            </Box>
+       	</Box> 
+        
        </Box>
         </Grid>
     )

@@ -12,10 +12,9 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-const Selector = () =>{
-    const classes = useStyles();
-    const [order,setOrder] = React.useState('');
+const Selector = ({order,setOrder}) =>{
 
+    const classes = useStyles();
     const handleChange = (event) =>{
         setOrder(event.target.value)
     };
