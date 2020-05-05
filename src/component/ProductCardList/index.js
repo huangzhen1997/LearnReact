@@ -26,7 +26,7 @@ const ProductCardList = ({products,order,stock,setSelected,selected}) =>{
                         }      
                         ).map(product =>
                         <Grid item xs={3} key={product.sku}>
-                             <ProductCard product={product} setSelected={setSelected} stock={stock[product.sku]}selected={selected} />
+                             <ProductCard product={product} setSelected={setSelected} stock={stock==undefined? "" : stock.inventory[product.sku]}selected={selected} />
                         </Grid>)
                     }
                 </Grid>
