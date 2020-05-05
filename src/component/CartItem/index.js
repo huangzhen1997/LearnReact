@@ -1,7 +1,7 @@
 import React from 'react';
 import {Box,Grid,Button} from '@material-ui/core';
 
-const CartItem = ({item,size,setSelected,selected}) =>{
+const CartItem = ({item,setTotal,size,setSelected,selected}) =>{
 
     console.log("the size is ")
     console.log(size)
@@ -20,11 +20,19 @@ const CartItem = ({item,size,setSelected,selected}) =>{
             tempSelected[cur_pro.sku]['product']=cur_pro;
             setSelected(tempSelected);
         }
+
+        const keys =Object.keys(selected);
+        var temp=0;
+        for (const key of keys){
+            temp += selected[key]['quantity']*selected[key]['product']['price']
+        }
+        setTotal(temp);
     }
 
     const removingFromCart = (cur_pro)=>{
 
         const tempSelected=selected;
+
         if(cur_pro.sku in tempSelected){
             tempSelected[cur_pro.sku]['quantity']-=1;
             if(tempSelected[cur_pro.sku]['quantity']===0){
@@ -32,6 +40,13 @@ const CartItem = ({item,size,setSelected,selected}) =>{
             }
             setSelected(tempSelected);
         }
+        const keys =Object.keys(selected);
+        var temp=0;
+        
+        for (const key of keys){
+            temp += selected[key]['quantity']*selected[key]['product']['price']
+        }
+        setTotal(temp);
     }
 
 

@@ -1,6 +1,9 @@
-import React from 'react';
+
 import {makeStyles} from "@material-ui/core/styles";
 import {Card,CardMedia,CardContent,CardActionArea,CardActions,Typography,Grid,Button} from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
+import { teal } from "@material-ui/core/colors";
+import { Label } from "rbx";
 
 const useStyles = makeStyles({
     root: {
@@ -9,9 +12,33 @@ const useStyles = makeStyles({
     media: {
       height: 540
     },
+
+    active:{
+        backgroundcolor: teal
+    }
   });
 
-const ProductCard = ({product,selected,setSelected}) => {
+const ProductCard = ({product,stock,selected,setSelected}) => {
+
+    const [currentsize,setCurrentSize]=useState("")
+    const stockmap =[]
+
+
+    if (stock!=undefined){
+        if(stock["S"]>0){
+            stockmap.push("S")
+        }
+        if(stock["M"]>0){
+            stockmap.push("M")
+        }
+        if(stock["L"]>0){
+            stockmap.push("L")
+        }
+        if(stock["XL"]>0){
+            stockmap.push("XL")
+        }
+    }
+
 
     const addingToCart = (cur_pro)=>{
 
@@ -27,6 +54,12 @@ const ProductCard = ({product,selected,setSelected}) => {
             tempSelected[cur_pro.sku]['product']=cur_pro;
             setSelected(tempSelected);
         }
+    }
+
+    const changeCurrentSize=size=>{
+        setCurrentSize(size)
+        console.log("current size is")
+        console.log(currentsize)
     }
 
     const classes = useStyles();
@@ -45,26 +78,24 @@ const ProductCard = ({product,selected,setSelected}) => {
             </CardActionArea>
             <CardActions>
                  <Grid container justify="space-around">
-                     <Button color="default" variant="outlined" className={classes.sizeButton}>
-                         S
-                     </Button>
-                     <Button color="default" variant="outlined" className={classes.sizeButton}>
-                         M
-                     </Button>
-                     <Button color="default" variant="outlined" className={classes.sizeButton}>
-                         L
-                     </Button>
-                     <Button color="default" variant="outlined" className={classes.sizeButton}>
-                         XL
-                     </Button>
+                    {stockmap.map(size=>
+                    <Button color="default" variant="outlined" onClick={()=>changeCurrentSize(size)} className={size===currentsize ?  "active" : "button"}>
+                    {size}
+                    </Button>
+                    )}
                  </Grid>
              </CardActions> 
              <CardActions>
                  <Grid container justify="center">
+                     <Label>{currentsize}</Label>
+                </Grid>
+                 <Grid container justify="center">
                      <Button size="large" variant="contained" color="primary" onClick={()=>addingToCart(product)}>
                          Add to Cart
                     </Button>
+                    
                 </Grid>
+                
             </CardActions>
         </Card>
     );

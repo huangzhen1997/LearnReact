@@ -4,16 +4,14 @@ import Container from '@material-ui/core/Container';
 import ProductCard from "../ProductCard"
 
 
-const ProductCardList = ({products,order,setSelected,selected}) =>{
+const ProductCardList = ({products,order,stock,setSelected,selected}) =>{
 
     return(
         <React.Fragment>
             <Container fixed>
                 <Grid container space = {3} direction = "row">
                     {products.sort(
-                        
-                        (product1,product2)=>
-                        
+                        (product1,product2)=>       
                         {
                             if(order===''){
                                 return product1["price"] > product2["price"]
@@ -25,11 +23,10 @@ const ProductCardList = ({products,order,setSelected,selected}) =>{
                             {
                                 return product2["price"]-product1["price"] 
                             }                    
-                        }
-                        
+                        }      
                         ).map(product =>
                         <Grid item xs={3} key={product.sku}>
-                             <ProductCard product={product} setSelected={setSelected} selected={selected} />
+                             <ProductCard product={product} setSelected={setSelected} stock={stock[product.sku]}selected={selected} />
                         </Grid>)
                     }
                 </Grid>
