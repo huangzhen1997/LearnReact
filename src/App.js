@@ -30,12 +30,10 @@ const App = () => {
   const [stock,setStock] = React.useState('');
 
   useEffect(() => {
-
-
 		const handleData = snap => {
-			if (snap.val()) setStock(snap.val());
+      if (snap.val()) setStock(snap.val());
 		};
-		db.on('value', handleData, error => alert(error));
+    db.on('value', handleData, error => alert(error));
 		return () => { db.off('value', handleData); };
   }, []);
 
@@ -69,7 +67,7 @@ const App = () => {
       <Drawer anchor = "right" open={cart} onClose={() => {toggleCart(cart)}}>
          <ShoppingCart  selected={selected}  setSelected={setSelected}/>
       </Drawer>
-      <ProductList products = {products} order = {order} selected={selected} stock={stock} setSelected={setSelected}/>
+      <ProductList products = {products} order = {order} selected={selected} stock={stock.inventory} setSelected={setSelected}/>
     </React.Fragment>
   );
 };

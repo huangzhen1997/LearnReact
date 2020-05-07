@@ -6,6 +6,10 @@ import ProductCard from "../ProductCard"
 
 const ProductCardList = ({products,order,stock,setSelected,selected}) =>{
 
+
+    console.log(stock)
+
+
     return(
         <React.Fragment>
             <Container fixed>
@@ -26,7 +30,7 @@ const ProductCardList = ({products,order,stock,setSelected,selected}) =>{
                         }      
                         ).map(product =>
                         <Grid item xs={3} key={product.sku}>
-                             <ProductCard product={product} setSelected={setSelected} stock={stock==undefined? "" : stock.inventory[product.sku]}selected={selected} />
+                             <ProductCard product={product} setSelected={setSelected} stock={stock === undefined ? "" : stock[product.sku]} selected={selected} />
                         </Grid>)
                     }
                 </Grid>
