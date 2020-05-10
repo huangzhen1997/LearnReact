@@ -1,52 +1,97 @@
 import React from 'react';
 import {Box,Grid,Button} from '@material-ui/core';
+import 'firebase/database';
+import { firebase, storage } from '../../shared/firebase.js'
+import { Label } from 'rbx';
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
-const CartItem = ({item,setTotal,size,setSelected,selected}) =>{
+const CartItem = ({item,user,setTotal,quantity,stock,size,setSelected,selected}) =>{
 
     console.log("the size is ")
-    console.log(size)
+    console.log(quantity)
 
     const addingToCart = (cur_pro)=>{
 
+        if(stock[size]===0){
+            alert("out of stock");
+            return false
+        }
+
+        stock[size]-=1;
+        const second_dbRef = firebase.database().ref('inventory/'+cur_pro.sku);
+        second_dbRef.set(stock)
+                .catch(error => {
+                    alert(error);
+                    console.log("can't update database")
+                });
+
         const tempSelected=selected;
         if(cur_pro.sku in tempSelected){
-            tempSelected[cur_pro.sku]['quantity']+=1;
-            setSelected(tempSelected);
+            tempSelected[cur_pro.sku]['size'][size]+=1;    
         }
+
         else{
             console.log("firstime")
             tempSelected[cur_pro.sku]={};
-            tempSelected[cur_pro.sku]['quantity']=1;
+            tempSelected[cur_pro.sku]['size'][size]=1;
             tempSelected[cur_pro.sku]['product']=cur_pro;
-            setSelected(tempSelected);
         }
+
+        const dbRef = firebase.database().ref('carts/'+user.displayName);
+        dbRef.set(tempSelected)
+                .catch(error => {
+                    alert(error);
+                    console.log("can't update database")
+                });
+            
+        setSelected(tempSelected);
 
         const keys =Object.keys(selected);
         var temp=0;
+        console.log(selected[keys[0]])
         for (const key of keys){
-            temp += selected[key]['quantity']*selected[key]['product']['price']
+            const sizes = Object.keys(selected[key]['size'])
+            for(const size of sizes){
+                temp += selected[key]['size'][size]*selected[key]['product']['price']
+            }
         }
-        setTotal(temp);
+    
+        setTotal(temp)
+
     }
 
     const removingFromCart = (cur_pro)=>{
 
+        stock[size]+=1;
+        const second_dbRef = firebase.database().ref('inventory/'+cur_pro.sku);
+        second_dbRef.set(stock)
+                .catch(error => {
+                    alert(error);
+                    console.log("can't update database")
+                });
+
         const tempSelected=selected;
 
         if(cur_pro.sku in tempSelected){
-            tempSelected[cur_pro.sku]['quantity']-=1;
-            if(tempSelected[cur_pro.sku]['quantity']===0){
+            tempSelected[cur_pro.sku]['size'][size]-=1;
+            if(tempSelected[cur_pro.sku]['size'][size]===0){
                 delete tempSelected[cur_pro.sku]; 
             }
             setSelected(tempSelected);
         }
+
         const keys =Object.keys(selected);
         var temp=0;
-        
+        console.log(selected[keys[0]])
         for (const key of keys){
-            temp += selected[key]['quantity']*selected[key]['product']['price']
+            const sizes = Object.keys(selected[key]['size'])
+            for(const size of sizes){
+                temp += selected[key]['size'][size]*selected[key]['product']['price']
+            }
         }
-        setTotal(temp);
+    
+        setTotal(temp)
     }
 
 
@@ -63,6 +108,7 @@ const CartItem = ({item,setTotal,size,setSelected,selected}) =>{
        	{item.description}
        	</Box>
         <Box >
+            <Label>{size}</Label>
             <Button  onClick={()=>addingToCart(item)}>
                          + 
             </Button>
@@ -70,7 +116,7 @@ const CartItem = ({item,setTotal,size,setSelected,selected}) =>{
                          -
             </Button>
             <Box  fontWeight="dark">
-                {size}  X  {item.currencyFormat + item.price.toString()}
+                {quantity}  X  {item.currencyFormat + item.price.toString()}
             </Box>
        	</Box> 
         

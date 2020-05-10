@@ -4,10 +4,7 @@ import Container from '@material-ui/core/Container';
 import ProductCard from "../ProductCard"
 
 
-const ProductCardList = ({products,order,stock,setSelected,selected}) =>{
-
-
-    console.log(stock)
+const ProductCardList = ({products,user,order,stock,setSelected,selected}) =>{
 
 
     return(
@@ -30,7 +27,7 @@ const ProductCardList = ({products,order,stock,setSelected,selected}) =>{
                         }      
                         ).map(product =>
                         <Grid item xs={3} key={product.sku}>
-                             <ProductCard product={product} setSelected={setSelected} stock={stock === undefined ? "" : stock[product.sku]} selected={selected} />
+                             <ProductCard product={product} user = {user} setSelected={setSelected} stock={stock === undefined ? "" : stock[product.sku]} selected={selected} />
                         </Grid>)
                     }
                 </Grid>

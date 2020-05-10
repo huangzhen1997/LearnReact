@@ -4,6 +4,7 @@ import {Card,CardMedia,CardContent,CardActionArea,CardActions,Typography,Grid,Bu
 import React, { useEffect, useState } from 'react';
 import { teal } from "@material-ui/core/colors";
 import { Label } from "rbx";
+import {firebase} from "../../shared/firebase"
 
 const useStyles = makeStyles({
     root: {
@@ -18,11 +19,10 @@ const useStyles = makeStyles({
     }
   });
 
-const ProductCard = ({product,stock,selected,setSelected}) => {
+const ProductCard = ({product,stock,user,selected,setSelected}) => {
 
     const [currentsize,setCurrentSize]=useState("")
     const stockmap =[]
-
 
     if (stock!=undefined){
         if(stock["S"]>0){
@@ -38,22 +38,54 @@ const ProductCard = ({product,stock,selected,setSelected}) => {
             stockmap.push("XL")
         }
     }
+    console.log(stockmap)
 
 
-    const addingToCart = (cur_pro)=>{
+    const addingToCart = (cur_pro,size)=>{
 
         console.log("calling function")
         const tempSelected=selected;
-        if(cur_pro.sku in tempSelected){
-            tempSelected[cur_pro.sku]['quantity']=+1;
-            setSelected(tempSelected);
-        }
-        else{
+        
+
+        if(!(cur_pro.sku in tempSelected)){
             tempSelected[cur_pro.sku]={};
-            tempSelected[cur_pro.sku]['quantity']=1;
+            tempSelected[cur_pro.sku]['size'] = {};
+            tempSelected[cur_pro.sku]['size'][size]=1;
             tempSelected[cur_pro.sku]['product']=cur_pro;
-            setSelected(tempSelected);
         }
+
+        else{
+            if (tempSelected[cur_pro.sku]['size'] !== size){
+                if(size in tempSelected[cur_pro.sku]['size']){
+                    tempSelected[cur_pro.sku]['size'][size]+=1;
+                }
+                else{
+                    tempSelected[cur_pro.sku]['size'][size]=1;
+                }
+            }
+            else{
+                tempSelected[cur_pro.sku]['size'][size]+=1;
+            }
+        }
+
+        const dbRef = firebase.database().ref('carts/'+user.displayName);
+        dbRef.set(tempSelected)
+                .catch(error => {
+                    alert(error);
+                    console.log("can't update database")
+                });
+
+    
+        const second_dbRef = firebase.database().ref('inventory/'+stock.sku);
+        stock[size]-=1;
+        second_dbRef.set(stock)
+                .catch(error => {
+                    alert(error);
+                    console.log("can't update database")
+                });
+            
+
+        setSelected(tempSelected);
     }
 
     const changeCurrentSize=size=>{
@@ -90,7 +122,7 @@ const ProductCard = ({product,stock,selected,setSelected}) => {
                      <Label>{currentsize}</Label>
                 </Grid>
                  <Grid container justify="center">
-                     <Button size="large" variant="contained" color="primary" onClick={()=>addingToCart(product)}>
+                     <Button size="large" variant="contained" color="primary" onClick={()=>addingToCart(product,currentsize)}>
                          Add to Cart
                     </Button>
                     
